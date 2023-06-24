@@ -160,9 +160,12 @@ Page resource error:
     return SafeArea(
       child: Scaffold(
         bottomNavigationBar: BottomNavigationBar(
+          selectedItemColor: const Color(0xFF44AAFF),
+          unselectedItemColor: const Color(0xFF44AAFF),
           items: [
-            const BottomNavigationBarItem(
-                icon: Icon(Icons.phone), label: 'Позвонить'),
+            BottomNavigationBarItem(
+              icon: Image.asset('assets/call.png',),
+              label: 'Позвонить'),
             BottomNavigationBarItem(
                 label: 'Обратный звонок',
                 icon: IconButton(
@@ -171,7 +174,7 @@ Page resource error:
                         sendMail('$param\n$phone\n\n$descr', 'feedback');
                       });
                     },
-                    icon: const Icon(Icons.phone_callback)))
+                    icon: Image.asset('assets/feedback.png',),))
           ],
         ),
         body: Stack(
@@ -181,15 +184,15 @@ Page resource error:
             ).build(context),
             if (showIcon)
               PopupMenuButton<int>(
+                offset: const Offset(0, 75),
                 icon: Container(
                     color: const Color(0xFF44AAFF),
                     width: 80,
                     height: 35,
-                    child: const Icon(Icons.add, color: Colors.white,)
+                    child: Image.asset('assets/drawer.png',)
                 ),
                 initialValue: selectedMenu,
-                  color: const Color(0xFF44AAFF),
-                // Callback that sets the selected popup menu item.
+                color: const Color(0xFF44AAFF),
                 onSelected: (int item) {
                   setState(() {
                     selectedMenu = item;
@@ -218,39 +221,42 @@ Page resource error:
                   });
                 },
                 itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                  const PopupMenuItem<int>(
+                  PopupMenuItem<int>(
                     value: 0,
                     child: Row(
                       children: [
-                        Icon(Icons.access_time),
-                        SizedBox(
+                        const SizedBox(width: 15),
+                        Image.asset('assets/dr_user.png',),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text('Пользовательское соглашение', style: TextStyle(fontSize: 12, color: Colors.white),),
+                        const Text('Пользовательское соглашение', style: TextStyle(fontSize: 12, color: Colors.white),),
                       ],
                     ),
                   ),
-                  const PopupMenuItem<int>(
+                  PopupMenuItem<int>(
                     value: 1,
                     child: Row(
                       children: [
-                        Icon(Icons.accessible_sharp),
-                        SizedBox(
+                        const SizedBox(width: 15),
+                        Image.asset('assets/dr_sec.png',),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text('Политика конфиденциальности', style: TextStyle(fontSize: 12, color: Colors.white),),
+                        const Text('Политика конфиденциальности', style: TextStyle(fontSize: 12, color: Colors.white),),
                       ],
                     ),
                   ),
-                  const PopupMenuItem<int>(
+                  PopupMenuItem<int>(
                     value: 2,
                     child: Row(
                       children: [
-                        Icon(Icons.delete),
-                        SizedBox(
+                        const SizedBox(width: 15),
+                        Image.asset('assets/dr_del.png',),
+                        const SizedBox(
                           width: 10,
                         ),
-                        Text('Удалить аккаунт', style: TextStyle(fontSize: 12, color: Colors.white),),
+                        const Text('Удалить аккаунт', style: TextStyle(fontSize: 12, color: Colors.white),),
                       ],
                     ),
                   ),
