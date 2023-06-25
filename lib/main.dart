@@ -28,7 +28,8 @@ class MyApp extends StatelessWidget {
 }
 
 typedef dialogCallback = void Function(String param, String phone);
-typedef feedbackCallback = void Function(String param, String phone, String descr);
+typedef feedbackCallback = void Function(
+    String param, String phone, String descr);
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -42,7 +43,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   late final PlatformWebViewController _controller;
   late bool showIcon = false;
-  late bool deleteAccount = false;
 
   void onshowIcon(bool _showIcon) {
     setState(() {
@@ -164,17 +164,47 @@ Page resource error:
           unselectedItemColor: const Color(0xFF44AAFF),
           items: [
             BottomNavigationBarItem(
-              icon: Image.asset('assets/call.png',),
-              label: 'Позвонить'),
+                label: '',
+                icon: Column(
+                  children: [
+                    Image.asset(
+                      'assets/call.png',
+                    ),
+                    const SizedBox(
+                      height: 12,
+                    ),
+                    const Text('Позвонить',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF44AAFF),
+                        ))
+                  ],
+                )),
+//              label: 'Позвонить'),
+
             BottomNavigationBarItem(
-                label: 'Обратный звонок',
-                icon: IconButton(
-                    onPressed: () {
-                      _feedback(context, (String param, String phone, String descr) {
-                        sendMail('$param\n$phone\n\n$descr', 'feedback');
-                      });
-                    },
-                    icon: Image.asset('assets/feedback.png',),))
+//                label: 'Обратный звонок',
+                label: '',
+                icon: Column(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        _feedback(context,
+                            (String param, String phone, String descr) {
+                          sendMail('$param\n$phone\n\n$descr', 'feedback');
+                        });
+                      },
+                      icon: Image.asset(
+                        'assets/feedback.png',
+                      ),
+                    ),
+                    const Text('Обратный звонок',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF44AAFF),
+                        ))
+                  ],
+                ))
           ],
         ),
         body: Stack(
@@ -189,8 +219,9 @@ Page resource error:
                     color: const Color(0xFF44AAFF),
                     width: 80,
                     height: 35,
-                    child: Image.asset('assets/drawer.png',)
-                ),
+                    child: Image.asset(
+                      'assets/drawer.png',
+                    )),
                 initialValue: selectedMenu,
                 color: const Color(0xFF44AAFF),
                 onSelected: (int item) {
@@ -208,14 +239,9 @@ Page resource error:
                         ));
                       case 2:
                         {
-                          _deleteAccount(context, (String param, String phone) {
+                          deleteAccount(context, (String param, String phone) {
                             sendMail('$param\n$phone', 'delete account');
-                            deleteAccount = true;
                           });
-                          if (deleteAccount) {
-                            _thankyou(context);
-                            deleteAccount = false;
-                          }
                         }
                     }
                   });
@@ -226,11 +252,16 @@ Page resource error:
                     child: Row(
                       children: [
                         const SizedBox(width: 15),
-                        Image.asset('assets/dr_user.png',),
+                        Image.asset(
+                          'assets/dr_user.png',
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
-                        const Text('Пользовательское соглашение', style: TextStyle(fontSize: 12, color: Colors.white),),
+                        const Text(
+                          'Пользовательское соглашение',
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
@@ -239,11 +270,16 @@ Page resource error:
                     child: Row(
                       children: [
                         const SizedBox(width: 15),
-                        Image.asset('assets/dr_sec.png',),
+                        Image.asset(
+                          'assets/dr_sec.png',
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
-                        const Text('Политика конфиденциальности', style: TextStyle(fontSize: 12, color: Colors.white),),
+                        const Text(
+                          'Политика конфиденциальности',
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
@@ -252,11 +288,16 @@ Page resource error:
                     child: Row(
                       children: [
                         const SizedBox(width: 15),
-                        Image.asset('assets/dr_del.png',),
+                        Image.asset(
+                          'assets/dr_del.png',
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
-                        const Text('Удалить аккаунт', style: TextStyle(fontSize: 12, color: Colors.white),),
+                        const Text(
+                          'Удалить аккаунт',
+                          style: TextStyle(fontSize: 12, color: Colors.white),
+                        ),
                       ],
                     ),
                   ),
@@ -277,106 +318,132 @@ Future<void> _feedback(BuildContext context, feedbackCallback onPressed) {
       TextEditingController _phone = TextEditingController();
       TextEditingController _descr = TextEditingController();
       return Dialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))
+        ),
         child: Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('X Закрыть', style: TextStyle(fontSize: 12, color: Color(0xFF939393),))),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Оставьте ваши контактные данные, и наш оператор свяжется с вами в ближайшее время',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Color(0xFF3076B9),)
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Как к Вам обращаться?',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('X Закрыть',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF939393),
+                          ))),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(border: Border.all(width: 1)),
-                child: TextField(
-                  controller: _name,
-                  decoration: const InputDecoration(
-                      border: InputBorder.none, filled: true),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Ваш номер телефона',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                const Text(
+                    'Оставьте ваши контактные данные, и наш оператор свяжется с вами в ближайшее время',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Color(0xFF3076B9),
+                    )),
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(border: Border.all(width: 1)),
-                child: TextField(
-                    controller: _phone,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        filled: true)),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Комментарий',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(border: Border.all(width: 1)),
-                child: TextField(
-                    controller: _descr,
-                    maxLines: 5,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        filled: true)),
-              ),
-              const SizedBox(height: 20,),
-              InkWell(
-                onTap: () {
-                  onPressed(_name.value.text, _phone.value.text, _descr.value.text);
-                  Navigator.of(context).pop();
-                  },
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: const BoxDecoration(
-                    color: Colors.blue,
+                const Text(
+                  'Как к Вам обращаться?',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
                   ),
-                  child: const Center(
-                    child: Text(
-                      'Отправить',
-                      style: TextStyle(color: Colors.white),
+                ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: TextField(
+                    controller: _name,
+                    decoration: const InputDecoration(
+                        border: InputBorder.none, filled: true),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Ваш номер телефона',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: TextField(
+                      controller: _phone,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, filled: true)),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Комментарий',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: TextField(
+                      controller: _descr,
+                      maxLines: 5,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, filled: true)),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () {
+                    onPressed(
+                        _name.value.text, _phone.value.text, _descr.value.text);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 45,
+                    decoration: const BoxDecoration(
+                      color: Colors.blue,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'Отправить',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Нажимая на кнопку “Отправить”, вы соглашаетесь с условиями пользовательского соглашения и политики конфиденциальности',
-                textAlign: TextAlign.center,
-                maxLines: 5,
-                style: TextStyle(fontSize: 12, color: Color(0xFF939393),)
-              ),
-              const SizedBox(height: 40,),
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                    'Нажимая на кнопку “Отправить”, вы соглашаетесь с условиями пользовательского соглашения и политики конфиденциальности',
+                    textAlign: TextAlign.center,
+                    maxLines: 5,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF939393),
+                    )),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -384,95 +451,127 @@ Future<void> _feedback(BuildContext context, feedbackCallback onPressed) {
   );
 }
 
-Future<void> _deleteAccount(BuildContext context, dialogCallback onPressed) {
+Future<void> deleteAccount(BuildContext context, dialogCallback onPressed) {
+  Widget _deleteAccount () {
+    return Container();
+  }
+
+  Widget _thankyou () {
+    return Container();
+  }
+
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
       TextEditingController _email = TextEditingController();
       TextEditingController _phone = TextEditingController();
       return Dialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))
+        ),
         child: Padding(
           padding: const EdgeInsets.all(18.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('X Закрыть', style: TextStyle(fontSize: 12, color: Color(0xFF939393),))),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Внимание! Вы собираетесь удалить аккаунт. Данное действие нельзя будет отменить.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.red,)
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Ваш email',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Align(
+                  alignment: Alignment.topRight,
+                  child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('X Закрыть',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF939393),
+                          ))),
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(border: Border.all(width: 1)),
-                child: TextField(
-                    controller: _email,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        filled: true)),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                'Ваш номер телефона',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-              Container(
-                decoration: BoxDecoration(border: Border.all(width: 1)),
-                child: TextField(
-                    controller: _phone,
-                    keyboardType: TextInputType.phone,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        filled: true)),
-              ),
-              const SizedBox(height: 20,),
-              InkWell(
-                onTap: () {
-                  onPressed(_email.value.text, _phone.value.text);
-                  Navigator.of(context).pop();
-                  },
-                child: Container(
-                  width: double.infinity,
-                  height: 45,
-                  decoration: const BoxDecoration(
-                    color: Colors.red,
+                const Text(
+                    'Внимание! Вы собираетесь удалить аккаунт. Данное действие нельзя будет отменить.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.red,
+                    )),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Ваш email',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
                   ),
-                  child: const Center(
-                    child: Text(
-                      'УДАЛИТЬ АККАУНТ',
-                      style: TextStyle(color: Colors.white),
+                ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: TextField(
+                      controller: _email,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, filled: true)),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                  'Ваш номер телефона',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                Container(
+                  decoration: BoxDecoration(border: Border.all(width: 1)),
+                  child: TextField(
+                      controller: _phone,
+                      keyboardType: TextInputType.phone,
+                      decoration: const InputDecoration(
+                          border: InputBorder.none, filled: true)),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                InkWell(
+                  onTap: () {
+                    onPressed(_email.value.text, _phone.value.text);
+                    Navigator.of(context).pop();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    height: 45,
+                    decoration: const BoxDecoration(
+                      color: Colors.red,
+                    ),
+                    child: const Center(
+                      child: Text(
+                        'УДАЛИТЬ АККАУНТ',
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20,),
-              const Text(
-                  'Нажимая на кнопку “Отправить”, вы соглашаетесь с условиями пользовательского соглашения и политики конфиденциальности',
-                  textAlign: TextAlign.center,
-                  maxLines: 5,
-                  style: TextStyle(fontSize: 12, color: Color(0xFF939393),)
-              ),
-              const SizedBox(height: 40,),
-            ],
+                const SizedBox(
+                  height: 20,
+                ),
+                const Text(
+                    'Нажимая на кнопку “Отправить”, вы соглашаетесь с условиями пользовательского соглашения и политики конфиденциальности',
+                    textAlign: TextAlign.center,
+                    maxLines: 5,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF939393),
+                    )),
+                const SizedBox(
+                  height: 40,
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -495,31 +594,39 @@ Future<void> _thankyou(BuildContext context) {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text('X Закрыть', style: TextStyle(fontSize: 12, color: Color(0xFF939393),))),
+                  child: const Text('X Закрыть',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF939393),
+                      ))),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text('Спасибо за ваше обращение!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF3076B9),
+                  )),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text('Мы получили ваш запрос на удаление аккаунта.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF3076B9),
+                  )),
               const SizedBox(
                 height: 20,
               ),
               const Text(
-                'Спасибо за ваше обращение!',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Color(0xFF3076B9),)
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                'Мы получили ваш запрос на удаление аккаунта.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Color(0xFF3076B9),)
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              const Text(
-                'Ваш аккаунт и все связанные с ним данные будут удалены в течение 24 часов.',
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Color(0xFF3076B9),)
-              ),
+                  'Ваш аккаунт и все связанные с ним данные будут удалены в течение 24 часов.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF3076B9),
+                  )),
               const SizedBox(
                 height: 20,
               ),
