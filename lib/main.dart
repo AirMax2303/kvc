@@ -5,6 +5,10 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
+import 'package:easy_mask/easy_mask.dart';
+
+//flutter clean
+//dart run flutter_native_splash:create
 
 void main() {
   runApp(const MyApp());
@@ -127,9 +131,13 @@ Page resource error:
   int selectedMenu = 0;
 
   Future<void> sendMail(String text, String subject) async {
-    String username = 'kvc24062023@gmail.com';
-    String password = '!q2w#e4r';
-    String to = 'al1707@mail.ru';
+//    String username = 'kvc24062023@gmail.com';
+//    String password = '!q2w#e4r';
+//    String to = 'al1707@mail.ru';
+
+    String username = 'al1707@mail.ru';
+    String password = 'sstqenGvkKxukd4sT8bc';
+    String to = 'kvc24062023@gmail.com';
 
     final message = Message()
       ..from = username
@@ -140,7 +148,8 @@ Page resource error:
     try {
 //      final smtpServer = gmail(username, password);
       final smtpServer = SmtpServer(
-        'smtp.gmail.com',
+//        'smtp.gmail.com',
+        'smtp.mail.ru',
         username: username,
         password: password,
         ignoreBadCertificate: true,
@@ -239,8 +248,21 @@ Page resource error:
                         ));
                       case 2:
                         {
-                          deleteAccount(context, (String param, String phone) {
-                            sendMail('$param\n$phone', 'delete account');
+//                          deleteAccount(context, (String param, String phone) {
+//                            sendMail('$param\n$phone', 'delete account');
+//                          });
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return _deleteAccount(context,
+                                  (String param, String phone) {
+                                sendMail('$param\n$phone', 'delete account');
+                              });
+                            },
+                          ).then((value) {
+                            if (value == 'delete') {
+                              _thankyou(context);
+                            }
                           });
                         }
                     }
@@ -319,8 +341,7 @@ Future<void> _feedback(BuildContext context, feedbackCallback onPressed) {
       TextEditingController _descr = TextEditingController();
       return Dialog(
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))
-        ),
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: SingleChildScrollView(
@@ -383,6 +404,12 @@ Future<void> _feedback(BuildContext context, feedbackCallback onPressed) {
                   decoration: BoxDecoration(border: Border.all(width: 1)),
                   child: TextField(
                       controller: _phone,
+                      inputFormatters: [
+                        TextInputMask(
+                            mask: ['\\+7 (999)999-99-99'],
+                            reverse: false
+                        )
+                      ],
                       keyboardType: TextInputType.phone,
                       decoration: const InputDecoration(
                           border: InputBorder.none, filled: true)),
@@ -451,130 +478,132 @@ Future<void> _feedback(BuildContext context, feedbackCallback onPressed) {
   );
 }
 
+Dialog _deleteAccount(BuildContext context, dialogCallback onPressed) {
+  TextEditingController _email = TextEditingController();
+  TextEditingController _phone = TextEditingController();
+
+  return Dialog(
+    shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10))),
+    child: Padding(
+      padding: const EdgeInsets.all(18.0),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop('exit');
+                  },
+                  child: const Text('X Закрыть',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Color(0xFF939393),
+                      ))),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+                'Внимание! Вы собираетесь удалить аккаунт. Данное действие нельзя будет отменить.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.red,
+                )),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'Ваш email',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(border: Border.all(width: 1)),
+              child: TextField(
+                  controller: _email,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none, filled: true)),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'Ваш номер телефона',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(border: Border.all(width: 1)),
+              child: TextField(
+                  controller: _phone,
+                  inputFormatters: [
+                    TextInputMask(
+                      mask: ['\\+7 (999)999-99-99'],
+                      reverse: false
+                    )
+                  ],
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(
+                      border: InputBorder.none, filled: true)),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            InkWell(
+              onTap: () {
+                onPressed(_email.value.text, _phone.value.text);
+                Navigator.of(context).pop('delete');
+              },
+              child: Container(
+                width: double.infinity,
+                height: 45,
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                ),
+                child: const Center(
+                  child: Text(
+                    'УДАЛИТЬ АККАУНТ',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+                'Нажимая на кнопку “Отправить”, вы соглашаетесь с условиями пользовательского соглашения и политики конфиденциальности',
+                textAlign: TextAlign.center,
+                maxLines: 5,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Color(0xFF939393),
+                )),
+            const SizedBox(
+              height: 40,
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
 Future<void> deleteAccount(BuildContext context, dialogCallback onPressed) {
-  Widget _deleteAccount () {
-    return Container();
-  }
-
-  Widget _thankyou () {
-    return Container();
-  }
-
   return showDialog<void>(
     context: context,
     builder: (BuildContext context) {
-      TextEditingController _email = TextEditingController();
-      TextEditingController _phone = TextEditingController();
-      return Dialog(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(10))
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(18.0),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('X Закрыть',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF939393),
-                          ))),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                    'Внимание! Вы собираетесь удалить аккаунт. Данное действие нельзя будет отменить.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.red,
-                    )),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  'Ваш email',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(border: Border.all(width: 1)),
-                  child: TextField(
-                      controller: _email,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none, filled: true)),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                  'Ваш номер телефона',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(border: Border.all(width: 1)),
-                  child: TextField(
-                      controller: _phone,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                          border: InputBorder.none, filled: true)),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                InkWell(
-                  onTap: () {
-                    onPressed(_email.value.text, _phone.value.text);
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    height: 45,
-                    decoration: const BoxDecoration(
-                      color: Colors.red,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'УДАЛИТЬ АККАУНТ',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-                const Text(
-                    'Нажимая на кнопку “Отправить”, вы соглашаетесь с условиями пользовательского соглашения и политики конфиденциальности',
-                    textAlign: TextAlign.center,
-                    maxLines: 5,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF939393),
-                    )),
-                const SizedBox(
-                  height: 40,
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+      return _deleteAccount(context, onPressed);
     },
   );
 }
@@ -584,25 +613,30 @@ Future<void> _thankyou(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
       return Dialog(
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Padding(
           padding: const EdgeInsets.all(18.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('X Закрыть',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Color(0xFF939393),
-                      ))),
+              Align(
+                alignment: Alignment.topRight,
+                child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('X Закрыть',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Color(0xFF939393),
+                        ))),
+              ),
               const SizedBox(
                 height: 20,
               ),
-              const Text('Спасибо за ваше обращение!',
+              const Text('        Спасибо за ваше обращение!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -630,7 +664,7 @@ Future<void> _thankyou(BuildContext context) {
               const SizedBox(
                 height: 20,
               ),
-            ],
+            ]
           ),
         ),
       );
